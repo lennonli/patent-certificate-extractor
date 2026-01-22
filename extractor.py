@@ -153,8 +153,9 @@ def save_results_to_excel(results, output_dir=None):
         print("No information to save.")
         return
 
-    # Pre-process: Remove spaces from Patent Number (专利号)
-    for res in results:
+    # Pre-process: Add Index (序号) and Remove spaces from Patent Number (专利号)
+    for i, res in enumerate(results, 1):
+        res['序号'] = i
         if '专利号' in res and res['专利号']:
             res['专利号'] = str(res['专利号']).replace(' ', '').strip()
 
@@ -162,7 +163,7 @@ def save_results_to_excel(results, output_dir=None):
         output_dir = os.getcwd()
 
     df = pd.DataFrame(results)
-    cols = ['专利号', '专利名称', '专利权人', '专利类型', '发明人', '申请日', '文件路径']
+    cols = ['序号', '专利号', '专利名称', '专利权人', '专利类型', '发明人', '申请日', '文件路径']
     for col in cols:
         if col not in df.columns:
             df[col] = None
