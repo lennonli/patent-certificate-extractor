@@ -248,10 +248,10 @@ Average time per file: 7.79 seconds
 ```json
 {
   "patent_number": "ZL 2013 1 0435279.1",
-  "patent_title": "Lycojaponicumin A在制备治疗子宫内膜癌药物中的应用",
+  "patent_title": "一种XXX化合物在制备药物中的应用",
   "patent_type": "发明专利",
-  "inventors": ["江春平", "王泽正"],
-  "patent_holder": "南京广康协生物医药技术有限公司",
+  "inventors": ["张三", "李四"],
+  "patent_holder": "XX生物医药技术有限公司",
   "application_date": "2013-09-23"
 }
 ```
@@ -259,7 +259,7 @@ Average time per file: 7.79 seconds
 ### Excel Output Structure
 | 专利号 | 专利名称 | 权利人 | 专利类型 | 发明人 | 申请日期 |
 |--------|----------|--------|----------|--------|----------|
-| ZL 2013 1 0435279.1 | Lycojaponicumin A在... | 南京广康协... | 发明专利 | 江春平;王泽正 | 2013-09-23 |
+| ZL 2013 1 0435279.1 | 一种XXX化合物的制备方法 | XX生物医药技术有限公司 | 发明专利 | 张三;李四 | 2013-09-23 |
 
 Excel features:
 - Header row with blue background and white text
