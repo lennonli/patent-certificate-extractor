@@ -3,6 +3,7 @@ import re
 import sys
 import json
 import argparse
+import concurrent.futures
 import pandas as pd
 import pytesseract
 from PIL import Image
@@ -152,6 +153,11 @@ def save_results_to_excel(results, output_dir=None):
         print("No information to save.")
         return
 
+    # Pre-process: Remove spaces from Patent Number (专利号)
+    for res in results:
+        if '专利号' in res and res['专利号']:
+            res['专利号'] = str(res['专利号']).replace(' ', '').strip()
+
     if not output_dir:
         output_dir = os.getcwd()
 
@@ -248,14 +254,27 @@ def main():
     # --- Mode: OCR Only ---
     if args.action == 'ocr_only':
         print(f"Found {len(files_to_process)} files to process.")
-        for file_path in files_to_process:
-            print(f"---START_OCR: {os.path.basename(file_path)}---")
-            text = extract_text_from_file(file_path)
-            if text:
-                print(text)
-            else:
-                print("(OCR Failed or Empty)")
-            print(f"---END_OCR---")
+        
+        # Use ProcessPoolExecutor to parallelize OCR
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            future_to_file = {executor.submit(extract_text_from_file, fp): fp for fp in files_to_process}
+            
+            for future in concurrent.futures.as_completed(future_to_file):
+                file_path = future_to_file[future]
+                filename = os.path.basename(file_path)
+                try:
+                    text = future.result()
+                    # Atomic print block
+                    print(f"---START_OCR: {filename}---")
+                    if text:
+                        print(text)
+                    else:
+                        print("(OCR Failed or Empty)")
+                    print(f"---END_OCR---")
+                except Exception as e:
+                    print(f"---START_OCR: {filename}---")
+                    print(f"Error processing {filename}: {e}")
+                    print(f"---END_OCR---")
         return
 
     # --- Mode: Full (Extraction) ---
