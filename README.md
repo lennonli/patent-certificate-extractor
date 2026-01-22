@@ -1,162 +1,40 @@
-# Patent Certificate Extractor
+# Patent Extraction Skill (AI Enhanced)
 
-A Claude skill for extracting structured information from scanned patent certificates (PDF/image formats) using OCR and LLM-based information extraction.
+This tool extracts information from Chinese Patent Certificates (PDF or Image) using **OCR** and **LLM** for high accuracy.
 
-## Features
+It supports:
+- **Google Gemini** (Preferred for accuracy and large context)
+- **OpenAI-compatible models** (DeepSeek, GPT-4, etc.)
+- **Regex Fallback** (Basic)
 
-- 📄 **Multi-format Support**: Handles PDF, PNG, JPG, JPEG, BMP, TIFF files
-- 🌐 **Bilingual OCR**: Tesseract-based text extraction for Chinese and English
-- 🤖 **LLM Extraction**: Intelligent information extraction using Claude
-- 📊 **Smart Excel Output**: Automatically sorted and grouped by:
-  - 权利人 (Patent Holder) - alphabetical order
-  - 专利类型 (Patent Type) - priority: 发明专利 > 实用新型专利 > 外观设计专利
-  - 申请日期 (Application Date) - descending (most recent first)
-- 📦 **Batch Processing**: Process multiple patent certificates at once
-- 🎨 **Visual Grouping**: Thick border lines separate different patent holder groups
+## Setup
 
-## Extracted Information
+### Option 1: Using Gemini (Recommended)
+You need a Google AI Studio API Key. 
 
-- 专利号 (Patent Number)
-- 专利名称 (Patent Title)
-- 权利人 (Patent Holder/Assignee)
-- 专利类型 (Patent Type)
-- 发明人 (Inventor)
-- 申请日期 (Application Date)
+1. Export your key:
+   ```bash
+   export GEMINI_API_KEY="AIzaSy..."
+   ```
+2. Run the tool:
+   ```bash
+   python3 patent_skill/extractor.py /path/to/files/
+   ```
 
-## Requirements
+### Option 2: Using OpenAI / DeepSeek
+1. Export your key:
+   ```bash
+   export OPENAI_API_KEY="sk-..."
+   # Optional: Set Base URL for DeepSeek
+   # export OPENAI_BASE_URL="https://api.deepseek.com"
+   ```
+2. Run the tool:
+   ```bash
+   python3 patent_skill/extractor.py /path/to/files/ --provider openai
+   ```
 
-### System Dependencies
-
+### Option 3: Basic Regex (No API Key)
+Just run without keys.
 ```bash
-# macOS
-brew install tesseract
-brew install tesseract-lang
-
-# Ubuntu
-sudo apt-get install tesseract-ocr
-sudo apt-get install tesseract-ocr-chi-sim
+python3 patent_skill/extractor.py /path/to/files/
 ```
-
-### Python Dependencies
-
-```bash
-pip install openpyxl pdf2image Pillow
-```
-
-## Usage
-
-### Quick Start
-
-1. **Extract OCR Text**
-
-```bash
-python scripts/extract_ocr.py certificate.pdf > extracted_text.txt
-```
-
-2. **Extract Information with LLM**
-
-Use the prompt template from `references/llm_prompt.md` with Claude or another LLM to extract structured data.
-
-3. **Generate Excel File**
-
-```bash
-python scripts/generate_excel.py patent_list.json
-```
-
-### Batch Processing
-
-```bash
-# Extract OCR text from all PDFs in a folder
-python scripts/batch_extract.py /path/to/patents
-
-# This will create:
-# - *_extracted.txt files for each certificate
-# - batch_extraction_results.json with metadata
-```
-
-### Testing
-
-```bash
-# Test sorting and grouping logic
-python scripts/test_sorting.py
-
-# Run complete demo with sample data
-python scripts/test_demo.py
-```
-
-## File Structure
-
-```
-patent-certificate-extractor/
-├── SKILL.md                           # Skill documentation
-├── scripts/
-│   ├── extract_ocr.py                 # OCR text extraction
-│   ├── generate_excel.py              # Excel generation with sorting
-│   ├── batch_extract.py              # Batch processing
-│   ├── test_sorting.py              # Sorting logic tests
-│   └── test_demo.py                # Complete workflow demo
-└── references/
-    └── llm_prompt.md               # LLM prompt template
-```
-
-## Sorting Rules
-
-The Excel output is automatically sorted and grouped:
-
-1. **Primary Sort**: 权利人 (Patent Holder) - alphabetically
-2. **Secondary Sort**: 专利类型 (Patent Type) - priority order:
-   - 发明专利 (Invention) - Priority 1
-   - 实用新型专利 (Utility Model) - Priority 2
-   - 外观设计专利 (Design) - Priority 3
-3. **Tertiary Sort**: 申请日期 (Application Date) - descending
-
-## Example Output
-
-```
-某某公司A | 发明专利 | 2020-06-01
-某某公司A | 发明专利 | 2019-07-10
-──────────────────────────────────────────────────────────
-某某公司B | 发明专利 | 2019-04-12
-某某公司B | 发明专利 | 2019-04-10
-某某公司B | 实用新型专利 | 2020-02-27
-某某公司B | 实用新型专利 | 2020-02-26
-```
-
-## Installation
-
-1. Download the `.skill` file
-2. Add it to your Claude skills directory
-3. The skill will be automatically available when you need to process patent certificates
-
-## Troubleshooting
-
-### Tesseract Not Found
-```
-Error: Tesseract OCR is not installed or not in PATH
-```
-**Solution**: Install Tesseract OCR and ensure it's in your PATH
-
-### Poor OCR Quality
-**Solution**:
-- Ensure scans are at 300 DPI or higher
-- Try pre-processing images (contrast adjustment, noise reduction)
-- Use Tesseract's advanced configuration options
-
-### PDF Processing Fails
-**Solution**:
-- Install pdf2image: `pip install pdf2image`
-- Install Poppler (required by pdf2image)
-- macOS: `brew install poppler`
-- Ubuntu: `sudo apt-get install poppler-utils`
-
-## License
-
-MIT License
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit issues or pull requests.
-
-## Author
-
-Created with ❤️ for Claude Skills
